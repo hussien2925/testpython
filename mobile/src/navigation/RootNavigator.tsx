@@ -2,11 +2,11 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TabNavigator } from './TabNavigator';
-import { ComposeScreen } from '../screens/ComposeScreen';
 import { ReminderDetailScreen } from '../screens/ReminderDetailScreen';
 import { NoteDetailScreen } from '../screens/NoteDetailScreen';
 import { PaywallScreen } from '../screens/PaywallScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { LocationPickerScreen } from '../screens/LocationPickerScreen';
 import { useSettings } from '../state/SettingsContext';
 import { useTheme } from '../theme/ThemeContext';
 import { useI18n } from '../i18n/I18nContext';
@@ -48,17 +48,13 @@ export function RootNavigator() {
           </Stack.Screen>
         ) : null}
         <Stack.Screen name="Tabs" component={TabNavigator} />
-        <Stack.Screen name="Compose" component={ComposeScreen} options={{ presentation: 'modal' }} />
         <Stack.Screen
           name="ReminderDetail"
           component={ReminderDetailScreen}
           options={{ headerShown: true, title: t.reminder.title, presentation: 'modal' }}
         />
-        <Stack.Screen
-          name="NoteDetail"
-          component={NoteDetailScreen}
-          options={{ presentation: 'modal' }}
-        />
+        <Stack.Screen name="NoteDetail" component={NoteDetailScreen} options={{ presentation: 'modal' }} />
+        <Stack.Screen name="LocationPicker" component={LocationPickerScreen} options={{ presentation: 'modal' }} />
         <Stack.Screen name="Paywall" component={PaywallScreen} options={{ presentation: 'modal' }} />
       </Stack.Navigator>
     </NavigationContainer>

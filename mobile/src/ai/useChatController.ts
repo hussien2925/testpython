@@ -1,0 +1,247 @@
+import { useCallback, useMemo, useState } from 'react';
+import { useChat } from '../state/ChatContext';
+import { useReminders } from '../state/RemindersContext';
+import { useNotes } from '../state/NotesContext';
+import { useI18n } from '../i18n/I18nContext';
+import { callOpenAi, isOpenAiConfigured, OpenAiMessage } from './openai';
+import { AI_TOOLS, buildSystemPrompt, REPEAT_VALUES, TRIGGER_VALUES } from './tools';
+import { parseInput } from '../nlp/parser';
+import { geocodePlace } from '../location/geocoding';
+import { ChatArtifact, LocationTrigger, RepeatRule } from '../types';
+
+interface ToolResult {
+  artifact: ChatArtifact;
+  humanSummary: string;
+}
+
+interface ChatController {
+  send: (rawText: string) => Promise<void>;
+  isSending: boolean;
+  aiEnabled: boolean;
+  lastError: string | null;
+}
+
+export function useChatController(): ChatController {
+  const { messages, appendMessage } = useChat();
+  const { addReminder } = useReminders();
+  const { addNote, appendToChecklist } = useNotes();
+  const { lang, t } = useI18n();
+  const [isSending, setIsSending] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
+
+  const aiEnabled = useMemo(() => isOpenAiConfigured(), []);
+
+  const runTool = useCallback(
+    async (name: string, args: Record<string, unknown>): Promise<ToolResult> => {
+      switch (name) {
+        case 'create_time_reminder': {
+          const title = String(args.title ?? '').trim() || t.reminder.title;
+          const dueDate = String(args.dueDate ?? '');
+          const repeatArg = args.repeat;
+          const repeat: RepeatRule = REPEAT_VALUES.includes(repeatArg as RepeatRule)
+            ? (repeatArg as RepeatRule)
+            : 'none';
+          const timeSensitive = Boolean(args.timeSensitive);
+          const parsed = new Date(dueDate);
+          if (Number.isNaN(parsed.getTime())) {
+            return {
+              artifact: { kind: 'error', message: 'invalid_date' },
+              humanSummary: lang === 'ar' ? 'ما فهمت التاريخ.' : 'I couldn\'t understand the date.',
+            };
+          }
+          const reminder = await addReminder({
+            title,
+            dueDate: parsed.toISOString(),
+            repeat,
+            timeSensitive,
+          });
+          return {
+            artifact: { kind: 'reminder-created', reminderId: reminder.id },
+            humanSummary: title,
+          };
+        }
+
+        case 'create_location_reminder': {
+          const title = String(args.title ?? '').trim() || t.reminder.title;
+          const query = String(args.locationQuery ?? '').trim();
+          const triggerArg = args.trigger;
+          const trigger: LocationTrigger = TRIGGER_VALUES.includes(triggerArg as LocationTrigger)
+            ? (triggerArg as LocationTrigger)
+            : 'arrive';
+          const radius = Math.max(50, Math.min(2000, Number(args.radiusMeters ?? 150)));
+          if (!query) {
+            return {
+              artifact: { kind: 'error', message: 'missing_location' },
+              humanSummary: lang === 'ar' ? 'حدد لي المكان بالضبط.' : 'Which place exactly?',
+            };
+          }
+          const places = await geocodePlace(query);
+          const best = places[0];
+          if (!best) {
+            return {
+              artifact: { kind: 'error', message: 'geocode_failed' },
+              humanSummary:
+                lang === 'ar'
+                  ? `ما لقيت "${query}" على الخريطة.`
+                  : `I couldn\'t find "${query}" on the map.`,
+            };
+          }
+          const reminder = await addReminder({
+            title,
+            dueDate: null,
+            location: {
+              latitude: best.latitude,
+              longitude: best.longitude,
+              radius,
+              name: best.label,
+              trigger,
+            },
+          });
+          return {
+            artifact: { kind: 'location-reminder-created', reminderId: reminder.id },
+            humanSummary: `${title} @ ${best.label}`,
+          };
+        }
+
+        case 'create_note': {
+          const title = String(args.title ?? '').trim();
+          const content = String(args.content ?? '').trim();
+          const note = await addNote({ type: 'text', title: title || content.slice(0, 40), content });
+          return { artifact: { kind: 'note-created', noteId: note.id }, humanSummary: title || content.slice(0, 40) };
+        }
+
+        case 'add_to_checklist': {
+          const listTitle = String(args.listTitle ?? '').trim();
+          const itemText = String(args.itemText ?? '').trim();
+          if (!listTitle || !itemText) {
+            return {
+              artifact: { kind: 'error', message: 'missing_list_args' },
+              humanSummary: t.common.error,
+            };
+          }
+          const note = await appendToChecklist(listTitle, itemText);
+          return { artifact: { kind: 'checklist-updated', noteId: note.id, itemText }, humanSummary: itemText };
+        }
+
+        default:
+          return { artifact: { kind: 'error', message: `unknown_tool:${name}` }, humanSummary: t.common.error };
+      }
+    },
+    [addReminder, addNote, appendToChecklist, lang, t]
+  );
+
+  const sendViaAi = useCallback(
+    async (userText: string) => {
+      const history: OpenAiMessage[] = [
+        { role: 'system', content: buildSystemPrompt(new Date(), lang) },
+        ...messages.slice(-16).map<OpenAiMessage>((m) => ({
+          role: m.role === 'system' ? 'assistant' : m.role,
+          content: m.content,
+        })),
+        { role: 'user', content: userText },
+      ];
+
+      const first = await callOpenAi({ messages: history, tools: AI_TOOLS });
+
+      if (first.toolCalls.length === 0) {
+        const reply = first.text.trim() || (lang === 'ar' ? 'تمّ.' : 'Done.');
+        await appendMessage('assistant', reply);
+        return;
+      }
+
+      const artifacts: ChatArtifact[] = [];
+      const toolMessages: OpenAiMessage[] = [];
+      for (const call of first.toolCalls) {
+        const result = await runTool(call.name, call.args);
+        artifacts.push(result.artifact);
+        toolMessages.push({
+          role: 'tool',
+          tool_call_id: call.id,
+          content: JSON.stringify({ ok: result.artifact.kind !== 'error', summary: result.humanSummary }),
+        });
+      }
+
+      const followUp = await callOpenAi({
+        messages: [...history, first.raw, ...toolMessages],
+        tools: AI_TOOLS,
+        toolChoice: 'none',
+      });
+      const reply = followUp.text.trim() || (lang === 'ar' ? 'تمّ.' : 'Done.');
+      await appendMessage('assistant', reply, artifacts);
+    },
+    [messages, lang, appendMessage, runTool]
+  );
+
+  const sendViaLocalFallback = useCallback(
+    async (userText: string) => {
+      const intent = parseInput(userText);
+      if (intent.kind === 'reminder') {
+        if (!intent.dueDate) {
+          const note = await addNote({ type: 'text', title: intent.title, content: userText });
+          await appendMessage('assistant', lang === 'ar' ? 'حفظت لك ملاحظة.' : 'Saved as a note.', [
+            { kind: 'note-created', noteId: note.id },
+          ]);
+          return;
+        }
+        const reminder = await addReminder({
+          title: intent.title,
+          dueDate: intent.dueDate,
+          isAllDay: intent.isAllDay,
+          repeat: intent.repeat,
+        });
+        await appendMessage('assistant', lang === 'ar' ? 'جاهز.' : 'Set.', [
+          { kind: 'reminder-created', reminderId: reminder.id },
+        ]);
+      } else if (intent.kind === 'checklist-add') {
+        const note = await appendToChecklist(intent.listTitle, intent.itemText);
+        await appendMessage(
+          'assistant',
+          lang === 'ar' ? `أضفت "${intent.itemText}" للقائمة.` : `Added "${intent.itemText}" to your list.`,
+          [{ kind: 'checklist-updated', noteId: note.id, itemText: intent.itemText }]
+        );
+      } else {
+        const note = await addNote({ type: 'text', title: intent.title, content: intent.content });
+        await appendMessage('assistant', lang === 'ar' ? 'حفظت الملاحظة.' : 'Saved as a note.', [
+          { kind: 'note-created', noteId: note.id },
+        ]);
+      }
+    },
+    [addReminder, addNote, appendToChecklist, appendMessage, lang]
+  );
+
+  const send = useCallback(
+    async (rawText: string) => {
+      const userText = rawText.trim();
+      if (!userText || isSending) return;
+      setIsSending(true);
+      setLastError(null);
+      await appendMessage('user', userText);
+      try {
+        if (aiEnabled) {
+          await sendViaAi(userText);
+        } else {
+          await sendViaLocalFallback(userText);
+        }
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        setLastError(message);
+        await appendMessage(
+          'assistant',
+          lang === 'ar'
+            ? 'صار خطأ. راح أحفظها كملاحظة مؤقتاً.'
+            : 'Something went wrong. Saving it as a note for now.'
+        );
+        try {
+          await sendViaLocalFallback(userText);
+        } catch {
+          // give up silently
+        }
+      } finally {
+        setIsSending(false);
+      }
+    },
+    [isSending, appendMessage, aiEnabled, sendViaAi, sendViaLocalFallback, lang]
+  );
+
+  return { send, isSending, aiEnabled, lastError };
+}

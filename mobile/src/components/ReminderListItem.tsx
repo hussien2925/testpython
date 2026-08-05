@@ -24,7 +24,10 @@ function formatDate(iso: string | null, lang: 'ar' | 'en'): string {
 
 export function ReminderListItem({ reminder, onPress, onToggleComplete }: Props) {
   const theme = useTheme();
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
+
+  const isLocation = Boolean(reminder.location);
+  const triggerLabel = reminder.location?.trigger === 'leave' ? t.location.onLeaving : t.location.onArrival;
 
   return (
     <Pressable
@@ -45,20 +48,32 @@ export function ReminderListItem({ reminder, onPress, onToggleComplete }: Props)
         </View>
       </Pressable>
       <View style={styles.textContainer}>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.text, textDecorationLine: reminder.completed ? 'line-through' : 'none' },
-          ]}
-          numberOfLines={2}
-        >
-          {reminder.title}
-        </Text>
+        <View style={styles.titleRow}>
+          <Text
+            style={[
+              styles.title,
+              { color: theme.text, textDecorationLine: reminder.completed ? 'line-through' : 'none' },
+            ]}
+            numberOfLines={2}
+          >
+            {reminder.title}
+          </Text>
+          {isLocation ? (
+            <View style={[styles.badge, { backgroundColor: theme.accent + '22', borderColor: theme.accent }]}>
+              <Text style={{ color: theme.accent, fontSize: 11, fontWeight: '700' }}>{triggerLabel}</Text>
+            </View>
+          ) : null}
+        </View>
         {reminder.dueDate ? (
           <Text style={[styles.date, { color: theme.textSecondary }]}>{formatDate(reminder.dueDate, lang)}</Text>
         ) : null}
+        {reminder.location ? (
+          <Text style={[styles.date, { color: theme.textSecondary }]} numberOfLines={1}>
+            📍 {reminder.location.name}
+          </Text>
+        ) : null}
       </View>
-      {reminder.timeSensitive ? <Text style={styles.badge}>🔔</Text> : null}
+      {reminder.timeSensitive ? <Text style={styles.timeSensitiveIcon}>🔔</Text> : null}
     </Pressable>
   );
 }
@@ -84,7 +99,9 @@ const styles = StyleSheet.create({
   },
   checkmark: { color: '#fff', fontSize: 13, fontWeight: '700' },
   textContainer: { flex: 1 },
-  title: { fontSize: 16, fontWeight: '600' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  title: { fontSize: 16, fontWeight: '600', flex: 1 },
+  badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, borderWidth: 1 },
   date: { fontSize: 13, marginTop: 3 },
-  badge: { fontSize: 14, marginStart: 8 },
+  timeSensitiveIcon: { fontSize: 14, marginStart: 8 },
 });

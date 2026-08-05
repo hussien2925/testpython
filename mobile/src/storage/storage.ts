@@ -5,6 +5,7 @@ const KEYS = {
   notes: 'waqtak.notes.v1',
   settings: 'waqtak.settings.v1',
   subscription: 'waqtak.subscription.v1',
+  chat: 'waqtak.chat.v1',
 } as const;
 
 export type StorageKey = keyof typeof KEYS;

@@ -1,10 +1,13 @@
 export type RepeatRule = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 
+export type LocationTrigger = 'arrive' | 'leave';
+
 export interface ReminderLocation {
   latitude: number;
   longitude: number;
   radius: number;
   name: string;
+  trigger: LocationTrigger;
 }
 
 export interface Reminder {
@@ -20,6 +23,7 @@ export interface Reminder {
   createdAt: string;
   updatedAt: string;
   notificationId: string | null;
+  geofenceRegionId: string | null;
 }
 
 export type NoteType = 'text' | 'checklist' | 'table';
@@ -58,4 +62,21 @@ export interface AppSettings {
   language: 'ar' | 'en';
   themePreference: 'system' | 'light' | 'dark';
   onboardingComplete: boolean;
+}
+
+export type ChatRole = 'user' | 'assistant' | 'system';
+
+export type ChatArtifact =
+  | { kind: 'reminder-created'; reminderId: string }
+  | { kind: 'location-reminder-created'; reminderId: string }
+  | { kind: 'note-created'; noteId: string }
+  | { kind: 'checklist-updated'; noteId: string; itemText: string }
+  | { kind: 'error'; message: string };
+
+export interface ChatMessage {
+  id: string;
+  role: ChatRole;
+  content: string;
+  artifacts: ChatArtifact[];
+  createdAt: string;
 }

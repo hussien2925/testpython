@@ -4,10 +4,6 @@ export interface TranslationShape {
     title1: string; body1: string; title2: string; body2: string; title3: string; body3: string;
     getStarted: string; next: string; skip: string;
   };
-  home: {
-    title: string; reminders: string; notes: string; emptyReminders: string; emptyNotes: string;
-    composePlaceholder: string; today: string; upcoming: string; completed: string;
-  };
   compose: {
     title: string; placeholder: string; listen: string; save: string; detectedReminder: string;
     detectedChecklist: string; detectedNote: string; due: string; noDate: string; micPermissionDenied: string;
@@ -32,6 +28,60 @@ export interface TranslationShape {
     restore: string; terms: string; maybeLater: string; freeLimitReached: string;
   };
   common: { cancel: string; done: string; loading: string; error: string; ok: string };
+  chat: {
+    tab: string;
+    inputPlaceholder: string;
+    emptyTitle: string;
+    emptySubtitle: string;
+    tipTime: string;
+    tipLocation: string;
+    tipChecklist: string;
+    thinking: string;
+    aiOffNotice: string;
+    reminderCard: string;
+    locationReminderCard: string;
+    noteCard: string;
+    checklistCard: string;
+    clearHistory: string;
+    reminderCreatedFor: string;
+    locationCreatedFor: string;
+    noteSaved: string;
+    itemAddedTo: string;
+    error: string;
+    at: string;
+    arriveTrigger: string;
+    leaveTrigger: string;
+  };
+  location: {
+    pickerTitle: string;
+    searchPlaceholder: string;
+    searchButton: string;
+    triggerLabel: string;
+    triggerArrive: string;
+    triggerLeave: string;
+    radiusLabel: string;
+    permissionNeeded: string;
+    noResults: string;
+    save: string;
+    onArrival: string;
+    onLeaving: string;
+    locationRemindersHeader: string;
+    upcomingRemindersHeader: string;
+  };
+  home: {
+    title: string;
+    reminders: string;
+    notes: string;
+    emptyReminders: string;
+    emptyNotes: string;
+    composePlaceholder: string;
+    today: string;
+    upcoming: string;
+    completed: string;
+    tabActive: string;
+    tabDone: string;
+    tabAll: string;
+  };
 }
 
 export const translations: Record<'en' | 'ar', TranslationShape> = {
@@ -52,12 +102,15 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       title: 'Waqtak',
       reminders: 'Reminders',
       notes: 'Notes',
-      emptyReminders: 'No reminders yet. Try "remind me tomorrow at 9 to call mom".',
+      emptyReminders: 'No reminders yet. Head over to the chat and describe what you need.',
       emptyNotes: 'No notes yet. Add your first note or checklist.',
       composePlaceholder: 'Remind me… or add a note…',
       today: 'Today',
       upcoming: 'Upcoming',
       completed: 'Completed',
+      tabActive: 'Active',
+      tabDone: 'Done',
+      tabAll: 'All',
     },
     compose: {
       title: 'New',
@@ -140,6 +193,46 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       error: 'Something went wrong',
       ok: 'OK',
     },
+    chat: {
+      tab: 'Chat',
+      inputPlaceholder: 'Ask Waqtak…',
+      emptyTitle: 'What should I remember for you?',
+      emptySubtitle: 'Talk to me like a friend. I turn what you say into reminders, notes, or checklist items — no menus.',
+      tipTime: '"Remind me tomorrow at 9 to call mom"',
+      tipLocation: '"When I get to the airport, remind me to grab water"',
+      tipChecklist: '"Add milk to my grocery list"',
+      thinking: 'Thinking…',
+      aiOffNotice: 'AI is off — running offline, works only for simple phrasings. Add an OpenAI key in .env for full smart chat.',
+      reminderCard: 'Reminder',
+      locationReminderCard: 'Location reminder',
+      noteCard: 'Note',
+      checklistCard: 'Checklist',
+      clearHistory: 'Clear conversation',
+      reminderCreatedFor: 'Reminder set',
+      locationCreatedFor: 'Location reminder set',
+      noteSaved: 'Note saved',
+      itemAddedTo: 'Added to',
+      error: 'Couldn\'t complete that',
+      at: 'at',
+      arriveTrigger: 'On arrival',
+      leaveTrigger: 'When leaving',
+    },
+    location: {
+      pickerTitle: 'Pick a place',
+      searchPlaceholder: 'Search a place, address, or landmark',
+      searchButton: 'Search',
+      triggerLabel: 'Fire when',
+      triggerArrive: 'I arrive',
+      triggerLeave: 'I leave',
+      radiusLabel: 'Detection radius',
+      permissionNeeded: 'Waqtak needs location permission — enable it in Settings so location reminders can fire.',
+      noResults: 'No places found for that search.',
+      save: 'Save location reminder',
+      onArrival: 'On arrival',
+      onLeaving: 'On leaving',
+      locationRemindersHeader: 'Location reminders',
+      upcomingRemindersHeader: 'Upcoming',
+    },
   },
   ar: {
     appName: 'وقتك',
@@ -158,12 +251,15 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       title: 'وقتك',
       reminders: 'التذكيرات',
       notes: 'الملاحظات',
-      emptyReminders: 'لا توجد تذكيرات بعد. جرّب "ذكرني بكرة الساعة ٩ أتصل بأمي".',
-      emptyNotes: 'لا توجد ملاحظات بعد. أضف أول ملاحظة أو قائمة.',
+      emptyReminders: 'ما فيه تذكيرات بعد. روح للشات واحكيلي وش تبي أذكرك فيه.',
+      emptyNotes: 'ما فيه ملاحظات بعد. أضف أول ملاحظة أو قائمة.',
       composePlaceholder: 'ذكرني… أو أضف ملاحظة…',
       today: 'اليوم',
       upcoming: 'القادمة',
       completed: 'مكتملة',
+      tabActive: 'نشطة',
+      tabDone: 'مكتملة',
+      tabAll: 'الكل',
     },
     compose: {
       title: 'جديد',
@@ -245,6 +341,46 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       loading: 'جارِ التحميل…',
       error: 'حدث خطأ ما',
       ok: 'حسناً',
+    },
+    chat: {
+      tab: 'محادثة',
+      inputPlaceholder: 'اكتب لوقتك…',
+      emptyTitle: 'وش أذكرك فيه؟',
+      emptySubtitle: 'كلمني عادي. أحول كلامك لتذكير أو ملاحظة أو عنصر في قائمة — بدون قوائم ولا خطوات.',
+      tipTime: '"ذكرني بكرة الساعة ٩ أتصل بأمي"',
+      tipLocation: '"لما أوصل المطار ذكرني آخذ معي مويه"',
+      tipChecklist: '"ضيف حليب لقائمة البقالة"',
+      thinking: 'أفكّر…',
+      aiOffNotice: 'الذكاء الاصطناعي مطفي — النظام يشتغل بتحليل بسيط بدون إنترنت. أضف مفتاح OpenAI في ملف .env لتفعيل المحادثة الكاملة.',
+      reminderCard: 'تذكير',
+      locationReminderCard: 'تذكير موقع',
+      noteCard: 'ملاحظة',
+      checklistCard: 'قائمة',
+      clearHistory: 'مسح المحادثة',
+      reminderCreatedFor: 'تم إعداد التذكير',
+      locationCreatedFor: 'تم إعداد تذكير الموقع',
+      noteSaved: 'الملاحظة محفوظة',
+      itemAddedTo: 'أضيف إلى',
+      error: 'ما قدرت أكمل الطلب',
+      at: '—',
+      arriveTrigger: 'عند الوصول',
+      leaveTrigger: 'عند المغادرة',
+    },
+    location: {
+      pickerTitle: 'اختر المكان',
+      searchPlaceholder: 'ابحث عن مكان أو عنوان أو معلم',
+      searchButton: 'بحث',
+      triggerLabel: 'يشتغل عند',
+      triggerArrive: 'الوصول',
+      triggerLeave: 'المغادرة',
+      radiusLabel: 'نصف قطر الاستشعار',
+      permissionNeeded: 'وقتك يحتاج إذن الموقع — فعّله من الإعدادات عشان تذكيرات الأماكن تشتغل.',
+      noResults: 'ما لقيت أماكن مطابقة.',
+      save: 'حفظ تذكير الموقع',
+      onArrival: 'عند الوصول',
+      onLeaving: 'عند المغادرة',
+      locationRemindersHeader: 'تذكيرات الأماكن',
+      upcomingRemindersHeader: 'القادمة',
     },
   },
 };

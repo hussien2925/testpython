@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen } from '../screens/HomeScreen';
+import { ChatScreen } from '../screens/ChatScreen';
+import { RemindersListScreen } from '../screens/RemindersListScreen';
 import { NotesScreen } from '../screens/NotesScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { useTheme } from '../theme/ThemeContext';
@@ -11,7 +12,8 @@ import { TabParamList } from './types';
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const ICONS: Record<keyof TabParamList, string> = {
-  Home: '⏰',
+  Chat: '💬',
+  Reminders: '⏰',
   Notes: '🗒️',
   Settings: '⚙️',
 };
@@ -30,7 +32,8 @@ export function TabNavigator() {
         tabBarIcon: () => <Text style={{ fontSize: 20 }}>{ICONS[route.name as keyof TabParamList]}</Text>,
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: t.home.reminders }} />
+      <Tab.Screen name="Chat" component={ChatScreen} options={{ title: t.chat.tab }} />
+      <Tab.Screen name="Reminders" component={RemindersListScreen} options={{ title: t.home.reminders }} />
       <Tab.Screen name="Notes" component={NotesScreen} options={{ title: t.home.notes }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: t.settings.title }} />
     </Tab.Navigator>

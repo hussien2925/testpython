@@ -5,10 +5,12 @@ export type RootStackParamList = {
   ReminderDetail: { id: string };
   NoteDetail: { id: string };
   Paywall: undefined;
+  LocationPicker: { returnTo?: 'chat' | 'detail'; prefillTitle?: string } | undefined;
 };
 
 export type TabParamList = {
-  Home: undefined;
+  Chat: undefined;
+  Reminders: undefined;
   Notes: undefined;
   Settings: undefined;
 };

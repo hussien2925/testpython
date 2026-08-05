@@ -5,11 +5,15 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SettingsProvider } from './src/state/SettingsContext';
 import { RemindersProvider } from './src/state/RemindersContext';
 import { NotesProvider } from './src/state/NotesContext';
+import { ChatProvider } from './src/state/ChatContext';
 import { SubscriptionProvider } from './src/subscriptions/SubscriptionContext';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { I18nProvider } from './src/i18n/I18nContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { setupNotificationCategories } from './src/notifications/notifications';
+// Importing this module runs its top-level TaskManager.defineTask side effect,
+// which must happen before any geofencing callback can fire.
+import './src/location/geofencing';
 
 function StatusBarBridge() {
   const theme = useTheme();
@@ -29,10 +33,12 @@ export default function App() {
             <ThemeProvider>
               <RemindersProvider>
                 <NotesProvider>
-                  <SubscriptionProvider>
-                    <StatusBarBridge />
-                    <RootNavigator />
-                  </SubscriptionProvider>
+                  <ChatProvider>
+                    <SubscriptionProvider>
+                      <StatusBarBridge />
+                      <RootNavigator />
+                    </SubscriptionProvider>
+                  </ChatProvider>
                 </NotesProvider>
               </RemindersProvider>
             </ThemeProvider>
