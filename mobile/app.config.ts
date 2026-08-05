@@ -6,6 +6,7 @@ const openAiBaseUrl = process.env.EXPO_PUBLIC_OPENAI_BASE_URL ?? 'https://api.op
 const revenueCatIos = process.env.REVENUECAT_API_KEY_IOS ?? '';
 const revenueCatAndroid = process.env.REVENUECAT_API_KEY_ANDROID ?? '';
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY ?? '';
+const easProjectId = process.env.EAS_PROJECT_ID ?? '';
 
 const config: ExpoConfig = {
   name: 'Waqtak',
@@ -80,7 +81,7 @@ const config: ExpoConfig = {
     openAiBaseUrl,
     revenueCatApiKeyIos: revenueCatIos,
     revenueCatApiKeyAndroid: revenueCatAndroid,
-    eas: { projectId: '' },
+    eas: { projectId: easProjectId },
   },
 };
 
