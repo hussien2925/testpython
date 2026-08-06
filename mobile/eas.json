@@ -30,6 +30,10 @@
   },
   "submit": {
     "production": {
+      "ios": {
+        "appleId": "alkhaldyssalem@gmail.com",
+        "appleTeamId": "88FB8VDXCT"
+      },
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",
         "track": "internal"

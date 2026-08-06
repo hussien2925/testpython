@@ -101,8 +101,8 @@ export function SettingsScreen() {
         <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t.settings.about}</Text>
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Row label={t.settings.notifications} onPress={() => requestNotificationPermission()} />
-          <Row label={t.settings.privacyPolicy} onPress={() => Linking.openURL('https://example.com/privacy')} />
-          <Row label={t.settings.terms} onPress={() => Linking.openURL('https://example.com/terms')} />
+          <Row label={t.settings.privacyPolicy} onPress={() => Linking.openURL('https://hussainmofareh.com/nabhni')} />
+          <Row label={t.settings.terms} onPress={() => Linking.openURL('https://hussainmofareh.com/nabhni')} />
           <Row label={t.settings.version} value={Constants.expoConfig?.version ?? '1.0.0'} />
         </View>
       </ScrollView>
