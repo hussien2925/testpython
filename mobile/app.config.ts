@@ -7,6 +7,11 @@ const revenueCatIos = process.env.REVENUECAT_API_KEY_IOS ?? '';
 const revenueCatAndroid = process.env.REVENUECAT_API_KEY_ANDROID ?? '';
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY ?? '';
 const easProjectId = process.env.EAS_PROJECT_ID ?? 'c095fc00-8146-4219-bde7-f5985b557107';
+// Supabase URL + anon/publishable key are safe to embed client-side (access
+// is enforced by the RLS policies in supabase/schema.sql, not by secrecy).
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://oryswbozkjvrhxpglzwt.supabase.co';
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? 'sb_publishable_0R9ErkgzuWXOhPZHU1DYfA_gu_C46df';
 
 const config: ExpoConfig = {
   // Internal identifiers (slug/scheme/bundleIdentifier/package) are kept as
@@ -109,6 +114,8 @@ const config: ExpoConfig = {
     revenueCatApiKeyIos: revenueCatIos,
     revenueCatApiKeyAndroid: revenueCatAndroid,
     googleMapsConfigured: Boolean(googleMapsApiKey),
+    supabaseUrl,
+    supabaseAnonKey,
     eas: { projectId: easProjectId },
   },
 };
