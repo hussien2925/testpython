@@ -86,10 +86,10 @@ export interface TranslationShape {
 
 export const translations: Record<'en' | 'ar', TranslationShape> = {
   en: {
-    appName: 'Waqtak',
+    appName: 'Nabhni',
     onboarding: {
       title1: 'Talk, and it remembers',
-      body1: 'Type or speak naturally — "remind me Sunday at 4" — and Waqtak turns it into a real reminder.',
+      body1: 'Type or speak naturally — "remind me Sunday at 4" — and Nabhni turns it into a real reminder.',
       title2: 'Notes that stay organized',
       body2: 'Checklists, tables, and plain notes, all searchable and available offline.',
       title3: 'Alarms that get through',
@@ -99,7 +99,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       skip: 'Skip',
     },
     home: {
-      title: 'Waqtak',
+      title: 'Nabhni',
       reminders: 'Reminders',
       notes: 'Notes',
       emptyReminders: 'No reminders yet. Head over to the chat and describe what you need.',
@@ -161,7 +161,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       themeDark: 'Dark',
       subscription: 'Subscription',
       free: 'Free plan',
-      plus: 'Waqtak Plus',
+      plus: 'Nabhni Plus',
       manage: 'Manage subscription',
       restorePurchases: 'Restore purchases',
       notifications: 'Notification permissions',
@@ -171,7 +171,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       version: 'Version',
     },
     paywall: {
-      title: 'Waqtak Plus',
+      title: 'Nabhni Plus',
       subtitle: 'Unlimited reminders, unlimited notes, and alarms that break through silent mode.',
       featureUnlimited: 'Unlimited reminders & notes',
       featureVoice: 'Unlimited voice input',
@@ -195,7 +195,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
     },
     chat: {
       tab: 'Chat',
-      inputPlaceholder: 'Ask Waqtak…',
+      inputPlaceholder: 'Ask Nabhni…',
       emptyTitle: 'What should I remember for you?',
       emptySubtitle: 'Talk to me like a friend. I turn what you say into reminders, notes, or checklist items — no menus.',
       tipTime: '"Remind me tomorrow at 9 to call mom"',
@@ -225,7 +225,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       triggerArrive: 'I arrive',
       triggerLeave: 'I leave',
       radiusLabel: 'Detection radius',
-      permissionNeeded: 'Waqtak needs location permission — enable it in Settings so location reminders can fire.',
+      permissionNeeded: 'Nabhni needs location permission — enable it in Settings so location reminders can fire.',
       noResults: 'No places found for that search.',
       save: 'Save location reminder',
       onArrival: 'On arrival',
@@ -235,10 +235,10 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
     },
   },
   ar: {
-    appName: 'وقتك',
+    appName: 'نبهني',
     onboarding: {
       title1: 'احكيله وبيتذكر',
-      body1: 'اكتب أو تكلم بشكل طبيعي — "ذكرني الأحد الساعة ٤" — ووقتك يحوّلها إلى تذكير حقيقي.',
+      body1: 'اكتب أو تكلم بشكل طبيعي — "ذكرني الأحد الساعة ٤" — ونبهني يحوّلها إلى تذكير حقيقي.',
       title2: 'ملاحظات منظمة دايم',
       body2: 'قوائم، جداول، وملاحظات نصية، كلها قابلة للبحث ومتوفرة بدون إنترنت.',
       title3: 'تنبيهات توصلك فعلاً',
@@ -248,7 +248,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       skip: 'تخطي',
     },
     home: {
-      title: 'وقتك',
+      title: 'نبهني',
       reminders: 'التذكيرات',
       notes: 'الملاحظات',
       emptyReminders: 'ما فيه تذكيرات بعد. روح للشات واحكيلي وش تبي أذكرك فيه.',
@@ -310,7 +310,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       themeDark: 'داكن',
       subscription: 'الاشتراك',
       free: 'الخطة المجانية',
-      plus: 'وقتك بلس',
+      plus: 'نبهني بلس',
       manage: 'إدارة الاشتراك',
       restorePurchases: 'استعادة المشتريات',
       notifications: 'أذونات الإشعارات',
@@ -320,7 +320,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       version: 'الإصدار',
     },
     paywall: {
-      title: 'وقتك بلس',
+      title: 'نبهني بلس',
       subtitle: 'تذكيرات وملاحظات غير محدودة، وتنبيهات تخترق الوضع الصامت.',
       featureUnlimited: 'تذكيرات وملاحظات بلا حدود',
       featureVoice: 'إدخال صوتي غير محدود',
@@ -344,7 +344,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
     },
     chat: {
       tab: 'محادثة',
-      inputPlaceholder: 'اكتب لوقتك…',
+      inputPlaceholder: 'اكتب لنبهني…',
       emptyTitle: 'وش أذكرك فيه؟',
       emptySubtitle: 'كلمني عادي. أحول كلامك لتذكير أو ملاحظة أو عنصر في قائمة — بدون قوائم ولا خطوات.',
       tipTime: '"ذكرني بكرة الساعة ٩ أتصل بأمي"',
@@ -374,7 +374,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       triggerArrive: 'الوصول',
       triggerLeave: 'المغادرة',
       radiusLabel: 'نصف قطر الاستشعار',
-      permissionNeeded: 'وقتك يحتاج إذن الموقع — فعّله من الإعدادات عشان تذكيرات الأماكن تشتغل.',
+      permissionNeeded: 'نبهني يحتاج إذن الموقع — فعّله من الإعدادات عشان تذكيرات الأماكن تشتغل.',
       noResults: 'ما لقيت أماكن مطابقة.',
       save: 'حفظ تذكير الموقع',
       onArrival: 'عند الوصول',

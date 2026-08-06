@@ -105,7 +105,7 @@ export function buildSystemPrompt(now: Date, language: 'ar' | 'en'): string {
       : 'Reply in English. Keep every reply to one short sentence.';
 
   return [
-    'You are Waqtak — the built-in reminders assistant for a mobile app.',
+    'You are Nabhni — the built-in reminders assistant for a mobile app.',
     'You help the user capture reminders, location-based reminders, notes, and checklist items.',
     `CURRENT_DATE_TIME (ISO): ${iso}`,
     `CURRENT_DATE_TIME (local): ${local}`,

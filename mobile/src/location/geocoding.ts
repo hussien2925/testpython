@@ -13,7 +13,7 @@ async function geocodeViaNominatim(query: string): Promise<GeocodedPlace[]> {
   // a descriptive User-Agent identifying the client — set here explicitly.
   const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&q=${encodeURIComponent(query)}`;
   const response = await fetch(url, {
-    headers: { 'User-Agent': 'Waqtak/1.0 (reminders app)' },
+    headers: { 'User-Agent': 'Nabhni/1.0 (reminders app)' },
   });
   if (!response.ok) return [];
   const rows = (await response.json()) as Array<{

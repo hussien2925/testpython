@@ -9,7 +9,12 @@ const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY ?? '';
 const easProjectId = process.env.EAS_PROJECT_ID ?? 'c095fc00-8146-4219-bde7-f5985b557107';
 
 const config: ExpoConfig = {
-  name: 'Waqtak',
+  // Internal identifiers (slug/scheme/bundleIdentifier/package) are kept as
+  // "waqtak" on purpose even after the rebrand — they're tied to the
+  // already-linked EAS project and the Apple/Google credentials generated
+  // for this bundle ID. Changing them would mean a brand-new App ID and
+  // re-doing device registration. Only the user-facing name/icon changed.
+  name: 'نبهني',
   slug: 'waqtak',
   version: '1.0.0',
   orientation: 'portrait',
@@ -23,15 +28,15 @@ const config: ExpoConfig = {
       UIBackgroundModes: ['remote-notification', 'location', 'fetch'],
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
-        'Waqtak uses your location to trigger reminders when you arrive at a place you chose.',
+        'Nabhni uses your location to trigger reminders when you arrive at a place you chose.',
       NSLocationAlwaysAndWhenInUseUsageDescription:
-        'Waqtak needs background location access so location-based reminders can fire even when the app is closed.',
+        'Nabhni needs background location access so location-based reminders can fire even when the app is closed.',
     },
   },
   android: {
     package: 'com.hussien2925.waqtak',
     adaptiveIcon: {
-      backgroundColor: '#3F6BFF',
+      backgroundColor: '#150F3D',
       foregroundImage: './assets/android-icon-foreground.png',
       backgroundImage: './assets/android-icon-background.png',
       monochromeImage: './assets/android-icon-monochrome.png',
@@ -55,22 +60,22 @@ const config: ExpoConfig = {
       'expo-speech-recognition',
       {
         microphonePermission:
-          'Waqtak needs microphone access so you can talk to your reminders assistant.',
+          'Nabhni needs microphone access so you can talk to your reminders assistant.',
         speechRecognitionPermission:
-          'Waqtak needs speech recognition access to turn what you say into reminders and notes.',
+          'Nabhni needs speech recognition access to turn what you say into reminders and notes.',
       },
     ],
     '@react-native-community/datetimepicker',
     'expo-font',
     [
       'expo-notifications',
-      { icon: './assets/notification-icon.png', color: '#3F6BFF' },
+      { icon: './assets/notification-icon.png', color: '#FFB020' },
     ],
     [
       'expo-location',
       {
         locationAlwaysAndWhenInUsePermission:
-          'Waqtak uses your location in the background to fire location-based reminders when you arrive at a place you chose.',
+          'Nabhni uses your location in the background to fire location-based reminders when you arrive at a place you chose.',
       },
     ],
     // Only touches AppDelegate/Podfile/AndroidManifest when a key is present,
