@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
@@ -21,17 +22,26 @@ type RouteType = RouteProp<RootStackParamList, 'LocationPicker'>;
 // text-based confirmation card so the picker still works for testing.
 let MapView: React.ComponentType<Record<string, unknown>> | null = null;
 let Marker: React.ComponentType<Record<string, unknown>> | null = null;
+let PROVIDER_GOOGLE: string | undefined;
 if (Platform.OS !== 'web') {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const rnMaps = require('react-native-maps');
     MapView = rnMaps.default;
     Marker = rnMaps.Marker;
+    PROVIDER_GOOGLE = rnMaps.PROVIDER_GOOGLE;
   } catch {
     MapView = null;
     Marker = null;
   }
 }
+
+// Set by app.config.ts only when GOOGLE_MAPS_API_KEY was present at build
+// time — the native Google Maps SDK key is baked in then, so requesting the
+// Google provider without it would just render a blank map.
+const GOOGLE_MAPS_CONFIGURED = Boolean(
+  (Constants.expoConfig?.extra as Record<string, unknown> | undefined)?.googleMapsConfigured
+);
 
 const RADIUS_OPTIONS = [100, 250, 500, 1000];
 
@@ -156,6 +166,7 @@ export function LocationPickerScreen() {
         <View style={styles.mapContainer}>
           <MapView
             style={StyleSheet.absoluteFill}
+            provider={GOOGLE_MAPS_CONFIGURED ? PROVIDER_GOOGLE : undefined}
             initialRegion={{
               latitude: selected.latitude,
               longitude: selected.longitude,

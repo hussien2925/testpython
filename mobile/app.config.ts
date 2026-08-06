@@ -44,7 +44,6 @@ const config: ExpoConfig = {
       'ACCESS_COARSE_LOCATION',
       'ACCESS_BACKGROUND_LOCATION',
     ],
-    config: googleMapsApiKey ? { googleMaps: { apiKey: googleMapsApiKey } } : undefined,
   },
   web: {
     favicon: './assets/favicon.png',
@@ -74,6 +73,20 @@ const config: ExpoConfig = {
           'Waqtak uses your location in the background to fire location-based reminders when you arrive at a place you chose.',
       },
     ],
+    // Only touches AppDelegate/Podfile/AndroidManifest when a key is present,
+    // so builds without GOOGLE_MAPS_API_KEY keep working exactly as before
+    // (Apple Maps on iOS, Play-services default map on Android).
+    ...(googleMapsApiKey
+      ? [
+          [
+            'react-native-maps',
+            {
+              iosGoogleMapsApiKey: googleMapsApiKey,
+              androidGoogleMapsApiKey: googleMapsApiKey,
+            },
+          ] as [string, Record<string, string>],
+        ]
+      : []),
   ],
   extra: {
     openAiApiKey: openAiKey,
@@ -81,6 +94,7 @@ const config: ExpoConfig = {
     openAiBaseUrl,
     revenueCatApiKeyIos: revenueCatIos,
     revenueCatApiKeyAndroid: revenueCatAndroid,
+    googleMapsConfigured: Boolean(googleMapsApiKey),
     eas: { projectId: easProjectId },
   },
 };
