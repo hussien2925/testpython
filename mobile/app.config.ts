@@ -72,6 +72,15 @@ const config: ExpoConfig = {
       { icon: './assets/notification-icon.png', color: '#FFB020' },
     ],
     [
+      'expo-splash-screen',
+      {
+        image: './assets/splash-logo.png',
+        backgroundColor: '#150F3D',
+        resizeMode: 'contain',
+        imageWidth: 240,
+      },
+    ],
+    [
       'expo-location',
       {
         locationAlwaysAndWhenInUsePermission:
