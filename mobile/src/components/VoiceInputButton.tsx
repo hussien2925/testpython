@@ -85,7 +85,7 @@ export function VoiceInputButton({ onResult }: Props) {
         accessibilityRole="button"
         accessibilityLabel="voice input"
       >
-        <Text style={styles.icon}>🎙️</Text>
+        <Text style={styles.icon}>{listening ? '⏹️' : '🎤'}</Text>
       </Pressable>
     </View>
   );

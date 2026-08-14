@@ -188,7 +188,17 @@ export function LocationPickerScreen() {
       ) : null}
 
       {selected && MapView && Marker ? (
-        <View style={styles.mapContainer}>
+        <Pressable
+          onPress={() => {
+            const url = Platform.OS === 'ios'
+              ? `maps://maps.apple.com/?q=${encodeURIComponent(selected.label)}&ll=${selected.latitude},${selected.longitude}`
+              : `geo:${selected.latitude},${selected.longitude}?q=${encodeURIComponent(selected.label)}`;
+            Linking.openURL(url).catch(() => {
+              Linking.openURL(`https://www.google.com/maps/search/${encodeURIComponent(selected.label)}`);
+            });
+          }}
+          style={styles.mapContainer}
+        >
           <MapView
             style={StyleSheet.absoluteFill}
             provider={GOOGLE_MAPS_CONFIGURED ? PROVIDER_GOOGLE : undefined}
@@ -207,15 +217,25 @@ export function LocationPickerScreen() {
           >
             <Marker coordinate={{ latitude: selected.latitude, longitude: selected.longitude }} title={selected.label} />
           </MapView>
-        </View>
+        </Pressable>
       ) : selected ? (
-        <View style={[styles.mapFallback, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+        <Pressable
+          onPress={() => {
+            const url = Platform.OS === 'ios'
+              ? `maps://maps.apple.com/?q=${encodeURIComponent(selected.label)}&ll=${selected.latitude},${selected.longitude}`
+              : `geo:${selected.latitude},${selected.longitude}?q=${encodeURIComponent(selected.label)}`;
+            Linking.openURL(url).catch(() => {
+              Linking.openURL(`https://www.google.com/maps/search/${encodeURIComponent(selected.label)}`);
+            });
+          }}
+          style={[styles.mapFallback, { backgroundColor: theme.surface, borderColor: theme.border }]}
+        >
           <Text style={styles.mapFallbackIcon}>📍</Text>
           <Text style={{ color: theme.text, fontSize: 14, textAlign: 'center' }}>{selected.label}</Text>
           <Text style={{ color: theme.textSecondary, fontSize: 12, marginTop: 4 }}>
             {selected.latitude.toFixed(5)}, {selected.longitude.toFixed(5)}
           </Text>
-        </View>
+        </Pressable>
       ) : null}
 
       {selected ? (
