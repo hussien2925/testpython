@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import type { Reminder } from '../types';
 
 // RevenueCat public SDK (API) keys — safe to embed client-side. Configure the
 // matching offering/products in the RevenueCat dashboard and App Store Connect
@@ -12,6 +13,14 @@ export const ENTITLEMENT_ID = 'plus';
 export const OFFERING_ID = 'default';
 
 export const FREE_PLAN_LIMITS = {
-  maxReminders: 15,
-  maxNotes: 15,
+  maxRemindersPerMonth: 5,
+  maxAddresses: 2,
 };
+
+export function countRemindersThisMonth(reminders: Reminder[]): number {
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  return reminders.filter(
+    (r) => new Date(r.createdAt).getTime() >= monthStart.getTime()
+  ).length;
+}

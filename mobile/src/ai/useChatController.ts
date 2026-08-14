@@ -2,11 +2,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { useChat } from '../state/ChatContext';
 import { useReminders } from '../state/RemindersContext';
 import { useNotes } from '../state/NotesContext';
+import { useSubscription } from '../subscriptions/SubscriptionContext';
 import { useI18n } from '../i18n/I18nContext';
 import { callOpenAi, isOpenAiConfigured, OpenAiMessage } from './openai';
 import { AI_TOOLS, buildSystemPrompt, REPEAT_VALUES, TRIGGER_VALUES } from './tools';
 import { parseInput } from '../nlp/parser';
 import { geocodePlace } from '../location/geocoding';
+import { countRemindersThisMonth, FREE_PLAN_LIMITS } from '../subscriptions/config';
 import { ChatArtifact, LocationTrigger, RepeatRule } from '../types';
 
 interface ToolResult {
@@ -23,8 +25,9 @@ interface ChatController {
 
 export function useChatController(): ChatController {
   const { messages, appendMessage } = useChat();
-  const { addReminder } = useReminders();
+  const { reminders, addReminder } = useReminders();
   const { addNote, appendToChecklist } = useNotes();
+  const { tier } = useSubscription();
   const { lang, t } = useI18n();
   const [isSending, setIsSending] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
@@ -35,6 +38,14 @@ export function useChatController(): ChatController {
     async (name: string, args: Record<string, unknown>): Promise<ToolResult> => {
       switch (name) {
         case 'create_time_reminder': {
+          if (tier === 'free' && countRemindersThisMonth(reminders) >= FREE_PLAN_LIMITS.maxRemindersPerMonth) {
+            return {
+              artifact: { kind: 'error', message: 'free_reminder_limit' },
+              humanSummary: lang === 'ar'
+                ? `وصلت لحد ٥ تذكيرات هذا الشهر. اشترك في بلس علشان تذكيرات بلا حدود.`
+                : 'You\'ve hit the 5-reminder monthly limit on the free plan. Subscribe to Plus for unlimited reminders.',
+            };
+          }
           const title = String(args.title ?? '').trim() || t.reminder.title;
           const dueDate = String(args.dueDate ?? '');
           const repeatArg = args.repeat;
@@ -62,6 +73,14 @@ export function useChatController(): ChatController {
         }
 
         case 'create_location_reminder': {
+          if (tier === 'free' && countRemindersThisMonth(reminders) >= FREE_PLAN_LIMITS.maxRemindersPerMonth) {
+            return {
+              artifact: { kind: 'error', message: 'free_reminder_limit' },
+              humanSummary: lang === 'ar'
+                ? `وصلت لحد ٥ تذكيرات هذا الشهر. اشترك في بلس علشان تذكيرات بلا حدود.`
+                : 'You\'ve hit the 5-reminder monthly limit on the free plan. Subscribe to Plus for unlimited reminders.',
+            };
+          }
           const title = String(args.title ?? '').trim() || t.reminder.title;
           const query = String(args.locationQuery ?? '').trim();
           const triggerArg = args.trigger;
@@ -127,7 +146,7 @@ export function useChatController(): ChatController {
           return { artifact: { kind: 'error', message: `unknown_tool:${name}` }, humanSummary: t.common.error };
       }
     },
-    [addReminder, addNote, appendToChecklist, lang, t]
+    [addReminder, addNote, appendToChecklist, lang, t, tier, reminders]
   );
 
   const sendViaAi = useCallback(
@@ -183,6 +202,15 @@ export function useChatController(): ChatController {
           ]);
           return;
         }
+        if (tier === 'free' && countRemindersThisMonth(reminders) >= FREE_PLAN_LIMITS.maxRemindersPerMonth) {
+          await appendMessage(
+            'assistant',
+            lang === 'ar'
+              ? 'وصلت لحد ٥ تذكيرات هذا الشهر. اشترك في بلس علشان تذكيرات بلا حدود.'
+              : 'You\'ve hit the 5-reminder monthly limit on the free plan. Subscribe to Plus for unlimited reminders.'
+          );
+          return;
+        }
         const reminder = await addReminder({
           title: intent.title,
           dueDate: intent.dueDate,
@@ -206,7 +234,7 @@ export function useChatController(): ChatController {
         ]);
       }
     },
-    [addReminder, addNote, appendToChecklist, appendMessage, lang]
+    [addReminder, addNote, appendToChecklist, appendMessage, lang, tier, reminders]
   );
 
   const send = useCallback(

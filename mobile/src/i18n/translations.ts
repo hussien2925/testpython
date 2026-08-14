@@ -24,7 +24,7 @@ export interface TranslationShape {
   };
   paywall: {
     title: string; subtitle: string; featureUnlimited: string; featureVoice: string; featureSilent: string;
-    featureWidgets: string; monthly: string; yearly: string; bestValue: string; subscribe: string;
+    featureAddresses: string; monthly: string; yearly: string; bestValue: string; subscribe: string;
     restore: string; terms: string; maybeLater: string; freeLimitReached: string;
   };
   common: { cancel: string; done: string; loading: string; error: string; ok: string };
@@ -172,11 +172,11 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
     },
     paywall: {
       title: 'Nabhni Plus',
-      subtitle: 'Unlimited reminders, unlimited notes, and alarms that break through silent mode.',
-      featureUnlimited: 'Unlimited reminders & notes',
+      subtitle: 'Unlimited reminders, addresses, voice input, and alarms that break through silent mode.',
+      featureUnlimited: 'Unlimited reminders, notes & addresses',
       featureVoice: 'Unlimited voice input',
       featureSilent: 'Silent-mode-breaking alarms',
-      featureWidgets: 'Home screen widgets & Live Activities',
+      featureAddresses: 'Unlimited saved addresses',
       monthly: 'Monthly',
       yearly: 'Yearly',
       bestValue: 'Best value',
@@ -321,11 +321,11 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
     },
     paywall: {
       title: 'نبهني بلس',
-      subtitle: 'تذكيرات وملاحظات غير محدودة، وتنبيهات تخترق الوضع الصامت.',
-      featureUnlimited: 'تذكيرات وملاحظات بلا حدود',
-      featureVoice: 'إدخال صوتي غير محدود',
+      subtitle: 'تذكيرات وعناوين وصوتي بلا حدود، وتنبيهات تخترق الوضع الصامت.',
+      featureUnlimited: 'تذكيرات وملاحظات وعناوين بلا حدود',
+      featureVoice: 'إدخال صوتي بلا حدود',
       featureSilent: 'تنبيهات تخترق الوضع الصامت',
-      featureWidgets: 'ودجت الشاشة الرئيسية و Live Activities',
+      featureAddresses: 'عناوين مسجلة بلا حدود',
       monthly: 'شهري',
       yearly: 'سنوي',
       bestValue: 'أفضل قيمة',

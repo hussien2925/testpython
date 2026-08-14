@@ -11,7 +11,7 @@ import { RootStackParamList } from '../navigation/types';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
-const FEATURE_KEYS = ['featureUnlimited', 'featureVoice', 'featureSilent', 'featureWidgets'] as const;
+const FEATURE_KEYS = ['featureUnlimited', 'featureVoice', 'featureSilent', 'featureAddresses'] as const;
 
 export function PaywallScreen() {
   const theme = useTheme();

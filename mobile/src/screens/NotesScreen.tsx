@@ -7,7 +7,6 @@ import { useTheme } from '../theme/ThemeContext';
 import { useI18n } from '../i18n/I18nContext';
 import { useNotes } from '../state/NotesContext';
 import { useSubscription } from '../subscriptions/SubscriptionContext';
-import { FREE_PLAN_LIMITS } from '../subscriptions/config';
 import { NoteListItem } from '../components/NoteListItem';
 import { EmptyState } from '../components/EmptyState';
 import { RootStackParamList } from '../navigation/types';
@@ -38,10 +37,6 @@ export function NotesScreen() {
 
   const createNote = async (type: NoteType) => {
     setShowNewMenu(false);
-    if (tier === 'free' && notes.length >= FREE_PLAN_LIMITS.maxNotes) {
-      navigation.navigate('Paywall');
-      return;
-    }
     const created = await addNote({ type, title: '' });
     navigation.navigate('NoteDetail', { id: created.id });
   };
