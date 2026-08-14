@@ -1,7 +1,7 @@
 import type { ExpoConfig } from 'expo/config';
 
 const openAiKey = process.env.EXPO_PUBLIC_OPENAI_API_KEY ?? '';
-const openAiModel = process.env.EXPO_PUBLIC_OPENAI_MODEL ?? 'gpt-4o-mini';
+const openAiModel = process.env.EXPO_PUBLIC_OPENAI_MODEL ?? 'gpt-4o';
 const openAiBaseUrl = process.env.EXPO_PUBLIC_OPENAI_BASE_URL ?? 'https://api.openai.com/v1';
 const revenueCatIos = process.env.REVENUECAT_API_KEY_IOS ?? '';
 const revenueCatAndroid = process.env.REVENUECAT_API_KEY_ANDROID ?? '';
