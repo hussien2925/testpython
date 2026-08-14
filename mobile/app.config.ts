@@ -30,12 +30,12 @@ const config: ExpoConfig = {
     bundleIdentifier: 'com.hussien2925.waqtak',
     supportsTablet: false,
     infoPlist: {
-      UIBackgroundModes: ['remote-notification', 'location', 'fetch'],
+      UIBackgroundModes: ['remote-notification', 'fetch'],
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
         'Nabhni uses your location to trigger reminders when you arrive at a place you chose.',
       NSLocationAlwaysAndWhenInUseUsageDescription:
-        'Nabhni needs background location access so location-based reminders can fire even when the app is closed.',
+        'Nabhni needs location access so location-based reminders can fire when you enter or leave a place, even when the app is closed.',
     },
   },
   android: {
