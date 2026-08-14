@@ -8,6 +8,7 @@ import type { RouteProp } from '@react-navigation/native';
 import { useTheme } from '../theme/ThemeContext';
 import { useI18n } from '../i18n/I18nContext';
 import { useReminders } from '../state/RemindersContext';
+import { useAddresses } from '../state/AddressesContext';
 import { useChat } from '../state/ChatContext';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { GeocodedPlace, geocodePlace } from '../location/geocoding';
@@ -51,7 +52,9 @@ export function LocationPickerScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<RouteType>();
   const { addReminder } = useReminders();
+  const { addAddress } = useAddresses();
   const { appendMessage } = useChat();
+  const isAddressMode = route.params?.returnTo === 'addresses';
 
   const [query, setQuery] = useState('');
   const [title, setTitle] = useState(route.params?.prefillTitle ?? '');
@@ -83,23 +86,33 @@ export function LocationPickerScreen() {
 
   const save = async () => {
     if (!selected || !title.trim()) return;
-    const reminder = await addReminder({
-      title: title.trim(),
-      dueDate: null,
-      location: {
+
+    if (isAddressMode) {
+      await addAddress({
+        name: title.trim(),
         latitude: selected.latitude,
         longitude: selected.longitude,
         radius,
-        name: selected.label,
-        trigger,
-      },
-    });
-    if (route.params?.returnTo === 'chat') {
-      await appendMessage(
-        'assistant',
-        `${t.chat.locationCreatedFor}: ${title.trim()}`,
-        [{ kind: 'location-reminder-created', reminderId: reminder.id }]
-      );
+      });
+    } else {
+      const reminder = await addReminder({
+        title: title.trim(),
+        dueDate: null,
+        location: {
+          latitude: selected.latitude,
+          longitude: selected.longitude,
+          radius,
+          name: selected.label,
+          trigger,
+        },
+      });
+      if (route.params?.returnTo === 'chat') {
+        await appendMessage(
+          'assistant',
+          `${t.chat.locationCreatedFor}: ${title.trim()}`,
+          [{ kind: 'location-reminder-created', reminderId: reminder.id }]
+        );
+      }
     }
     navigation.goBack();
   };
@@ -110,7 +123,9 @@ export function LocationPickerScreen() {
         <Pressable onPress={() => navigation.goBack()}>
           <Text style={{ color: theme.primary, fontSize: 16 }}>{t.common.cancel}</Text>
         </Pressable>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>{t.location.pickerTitle}</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          {isAddressMode ? 'إضافة عنوان' : t.location.pickerTitle}
+        </Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -202,26 +217,30 @@ export function LocationPickerScreen() {
             style={[styles.titleInput, { color: theme.text, backgroundColor: theme.surface, borderColor: theme.border }]}
           />
 
-          <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t.location.triggerLabel}</Text>
-          <View style={styles.chipsRow}>
-            {(['arrive', 'leave'] as LocationTrigger[]).map((opt) => (
-              <Pressable
-                key={opt}
-                onPress={() => setTrigger(opt)}
-                style={[
-                  styles.chip,
-                  {
-                    backgroundColor: trigger === opt ? theme.primary : theme.surfaceAlt,
-                    borderColor: theme.border,
-                  },
-                ]}
-              >
-                <Text style={{ color: trigger === opt ? theme.textInverse : theme.text, fontSize: 13 }}>
-                  {opt === 'arrive' ? t.location.triggerArrive : t.location.triggerLeave}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+          {!isAddressMode ? (
+            <>
+              <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t.location.triggerLabel}</Text>
+              <View style={styles.chipsRow}>
+                {(['arrive', 'leave'] as LocationTrigger[]).map((opt) => (
+                  <Pressable
+                    key={opt}
+                    onPress={() => setTrigger(opt)}
+                    style={[
+                      styles.chip,
+                      {
+                        backgroundColor: trigger === opt ? theme.primary : theme.surfaceAlt,
+                        borderColor: theme.border,
+                      },
+                    ]}
+                  >
+                    <Text style={{ color: trigger === opt ? theme.textInverse : theme.text, fontSize: 13 }}>
+                      {opt === 'arrive' ? t.location.triggerArrive : t.location.triggerLeave}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </>
+          ) : null}
 
           <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t.location.radiusLabel}</Text>
           <View style={styles.chipsRow}>

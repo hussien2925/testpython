@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SettingsProvider } from './src/state/SettingsContext';
 import { RemindersProvider } from './src/state/RemindersContext';
 import { NotesProvider } from './src/state/NotesContext';
+import { AddressesProvider } from './src/state/AddressesContext';
 import { ChatProvider } from './src/state/ChatContext';
 import { SubscriptionProvider } from './src/subscriptions/SubscriptionContext';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
@@ -34,12 +35,14 @@ export default function App() {
             <ThemeProvider>
               <RemindersProvider>
                 <NotesProvider>
-                  <ChatProvider>
-                    <SubscriptionProvider>
+                  <AddressesProvider>
+                    <ChatProvider>
+                      <SubscriptionProvider>
                       <StatusBarBridge />
                       <RootNavigator />
                     </SubscriptionProvider>
-                  </ChatProvider>
+                    </ChatProvider>
+                  </AddressesProvider>
                 </NotesProvider>
               </RemindersProvider>
             </ThemeProvider>

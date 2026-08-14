@@ -2,6 +2,17 @@ export type RepeatRule = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export type LocationTrigger = 'arrive' | 'leave';
 
+export interface Address {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ReminderLocation {
   latitude: number;
   longitude: number;
