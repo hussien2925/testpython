@@ -20,7 +20,7 @@ export function TabNavigator() {
     >
       <Tab.Screen name="Chat" component={ChatScreen} options={{ title: t.chat.tab }} />
       <Tab.Screen name="Reminders" component={RemindersListScreen} options={{ title: t.home.reminders }} />
-      <Tab.Screen name="Addresses" component={AddressesScreen} options={{ title: 'العناوين' }} />
+      <Tab.Screen name="Addresses" component={AddressesScreen} options={{ title: 'عناويني' }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: t.settings.title }} />
     </Tab.Navigator>
   );

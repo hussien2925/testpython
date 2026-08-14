@@ -93,20 +93,25 @@ export function VoiceInputButton({ onResult }: Props) {
 
 const styles = StyleSheet.create({
   button: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: { fontSize: 20 },
-  pulse: {
-    position: 'absolute',
     width: 56,
     height: 56,
     borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  icon: { fontSize: 24 },
+  pulse: {
+    position: 'absolute',
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     borderWidth: 2,
-    top: -6,
-    left: -6,
+    top: -8,
+    left: -8,
   },
 });
