@@ -7,6 +7,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { useI18n } from '../i18n/I18nContext';
 import { useReminders } from '../state/RemindersContext';
 import { ReminderListItem } from '../components/ReminderListItem';
+import { ReminderStats } from '../components/ReminderStats';
 import { EmptyState } from '../components/EmptyState';
 import { RootStackParamList } from '../navigation/types';
 import { Reminder } from '../types';
@@ -60,6 +61,8 @@ export function RemindersListScreen() {
       <View style={styles.header}>
         <Text style={[styles.headerTitle, { color: theme.text }]}>{t.home.reminders}</Text>
       </View>
+
+      <ReminderStats reminders={reminders} />
 
       <View style={styles.filterRow}>
         {tabs.map((tab) => (

@@ -9,7 +9,7 @@ interface OpenAiExtra {
 const extra = (Constants.expoConfig?.extra ?? {}) as OpenAiExtra;
 
 export const OPENAI_API_KEY = extra.openAiApiKey ?? '';
-export const OPENAI_MODEL = extra.openAiModel ?? 'gpt-4o-mini';
+export const OPENAI_MODEL = extra.openAiModel ?? 'gpt-4o';
 export const OPENAI_BASE_URL = extra.openAiBaseUrl ?? 'https://api.openai.com/v1';
 
 export function isOpenAiConfigured(): boolean {
