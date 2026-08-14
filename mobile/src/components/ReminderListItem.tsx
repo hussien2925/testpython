@@ -27,7 +27,7 @@ export function ReminderListItem({ reminder, onPress, onToggleComplete }: Props)
   const { t, lang } = useI18n();
 
   const isLocation = Boolean(reminder.location);
-  const triggerLabel = reminder.location?.trigger === 'leave' ? t.location.onLeaving : t.location.onArrival;
+  const triggerLabel = reminder.location?.trigger === 'leave' ? t.location.onLeaving : reminder.location?.trigger === 'passing' ? t.location.passingBy : t.location.onArrival;
 
   return (
     <Pressable

@@ -51,6 +51,7 @@ export interface TranslationShape {
     at: string;
     arriveTrigger: string;
     leaveTrigger: string;
+    passingTrigger: string;
   };
   location: {
     pickerTitle: string;
@@ -59,12 +60,14 @@ export interface TranslationShape {
     triggerLabel: string;
     triggerArrive: string;
     triggerLeave: string;
+    triggerPassing: string;
     radiusLabel: string;
     permissionNeeded: string;
     noResults: string;
     save: string;
     onArrival: string;
     onLeaving: string;
+    passingBy: string;
     locationRemindersHeader: string;
     upcomingRemindersHeader: string;
   };
@@ -216,6 +219,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       at: 'at',
       arriveTrigger: 'On arrival',
       leaveTrigger: 'When leaving',
+      passingTrigger: 'When passing by',
     },
     location: {
       pickerTitle: 'Pick a place',
@@ -224,12 +228,14 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       triggerLabel: 'Fire when',
       triggerArrive: 'I arrive',
       triggerLeave: 'I leave',
+      triggerPassing: 'I pass by',
       radiusLabel: 'Detection radius',
       permissionNeeded: 'Nabhni needs location permission — enable it in Settings so location reminders can fire.',
       noResults: 'No places found for that search.',
       save: 'Save location reminder',
       onArrival: 'On arrival',
       onLeaving: 'On leaving',
+      passingBy: 'Passing by',
       locationRemindersHeader: 'Location reminders',
       upcomingRemindersHeader: 'Upcoming',
     },
@@ -365,6 +371,7 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       at: '—',
       arriveTrigger: 'عند الوصول',
       leaveTrigger: 'عند المغادرة',
+      passingTrigger: 'عند المرور',
     },
     location: {
       pickerTitle: 'اختر المكان',
@@ -373,12 +380,14 @@ export const translations: Record<'en' | 'ar', TranslationShape> = {
       triggerLabel: 'يشتغل عند',
       triggerArrive: 'الوصول',
       triggerLeave: 'المغادرة',
+      triggerPassing: 'المرور',
       radiusLabel: 'نصف قطر الاستشعار',
       permissionNeeded: 'نبهني يحتاج إذن الموقع — فعّله من الإعدادات عشان تذكيرات الأماكن تشتغل.',
       noResults: 'ما لقيت أماكن مطابقة.',
       save: 'حفظ تذكير الموقع',
       onArrival: 'عند الوصول',
       onLeaving: 'عند المغادرة',
+      passingBy: 'عند المرور',
       locationRemindersHeader: 'تذكيرات الأماكن',
       upcomingRemindersHeader: 'القادمة',
     },

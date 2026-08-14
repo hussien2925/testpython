@@ -1,6 +1,6 @@
 export type RepeatRule = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 
-export type LocationTrigger = 'arrive' | 'leave';
+export type LocationTrigger = 'arrive' | 'leave' | 'passing';
 
 export interface Address {
   id: string;
@@ -37,35 +37,8 @@ export interface Reminder {
   geofenceRegionId: string | null;
 }
 
-export type NoteType = 'text' | 'checklist' | 'table';
-
-export interface ChecklistItem {
-  id: string;
-  text: string;
-  checked: boolean;
-}
-
-export interface NoteTable {
-  headers: string[];
-  rows: string[][];
-}
-
-export interface Note {
-  id: string;
-  type: NoteType;
-  title: string;
-  content: string;
-  items: ChecklistItem[];
-  table: NoteTable | null;
-  pinned: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export type ParsedIntent =
-  | { kind: 'reminder'; title: string; dueDate: string | null; isAllDay: boolean; repeat: RepeatRule }
-  | { kind: 'checklist-add'; listTitle: string; itemText: string }
-  | { kind: 'note'; title: string; content: string };
+  | { kind: 'reminder'; title: string; dueDate: string | null; isAllDay: boolean; repeat: RepeatRule };
 
 export type SubscriptionTier = 'free' | 'plus';
 
@@ -80,8 +53,6 @@ export type ChatRole = 'user' | 'assistant' | 'system';
 export type ChatArtifact =
   | { kind: 'reminder-created'; reminderId: string }
   | { kind: 'location-reminder-created'; reminderId: string }
-  | { kind: 'note-created'; noteId: string }
-  | { kind: 'checklist-updated'; noteId: string; itemText: string }
   | { kind: 'error'; message: string };
 
 export interface ChatMessage {

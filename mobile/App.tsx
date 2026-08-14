@@ -4,7 +4,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SettingsProvider } from './src/state/SettingsContext';
 import { RemindersProvider } from './src/state/RemindersContext';
-import { NotesProvider } from './src/state/NotesContext';
 import { AddressesProvider } from './src/state/AddressesContext';
 import { ChatProvider } from './src/state/ChatContext';
 import { SubscriptionProvider } from './src/subscriptions/SubscriptionContext';
@@ -34,16 +33,14 @@ export default function App() {
           <I18nProvider>
             <ThemeProvider>
               <RemindersProvider>
-                <NotesProvider>
-                  <AddressesProvider>
-                    <ChatProvider>
-                      <SubscriptionProvider>
-                      <StatusBarBridge />
-                      <RootNavigator />
-                    </SubscriptionProvider>
-                    </ChatProvider>
-                  </AddressesProvider>
-                </NotesProvider>
+                <AddressesProvider>
+                  <ChatProvider>
+                    <SubscriptionProvider>
+                    <StatusBarBridge />
+                    <RootNavigator />
+                  </SubscriptionProvider>
+                  </ChatProvider>
+                </AddressesProvider>
               </RemindersProvider>
             </ThemeProvider>
           </I18nProvider>

@@ -3,7 +3,6 @@ export type RootStackParamList = {
   Tabs: undefined;
   Compose: { prefill?: string } | undefined;
   ReminderDetail: { id: string };
-  NoteDetail: { id: string };
   Paywall: undefined;
   LocationPicker: { returnTo?: 'chat' | 'detail' | 'addresses'; prefillTitle?: string } | undefined;
 };
@@ -11,6 +10,7 @@ export type RootStackParamList = {
 export type TabParamList = {
   Chat: undefined;
   Reminders: undefined;
+  Home: undefined;
   Addresses: undefined;
   Settings: undefined;
 };

@@ -251,7 +251,7 @@ export function LocationPickerScreen() {
             <>
               <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>{t.location.triggerLabel}</Text>
               <View style={styles.chipsRow}>
-                {(['arrive', 'leave'] as LocationTrigger[]).map((opt) => (
+                {(['arrive', 'leave', 'passing'] as LocationTrigger[]).map((opt) => (
                   <Pressable
                     key={opt}
                     onPress={() => setTrigger(opt)}
@@ -264,7 +264,7 @@ export function LocationPickerScreen() {
                     ]}
                   >
                     <Text style={{ color: trigger === opt ? theme.textInverse : theme.text, fontSize: 13 }}>
-                      {opt === 'arrive' ? t.location.triggerArrive : t.location.triggerLeave}
+                      {opt === 'arrive' ? t.location.triggerArrive : opt === 'leave' ? t.location.triggerLeave : t.location.triggerPassing}
                     </Text>
                   </Pressable>
                 ))}

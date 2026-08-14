@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator } from 'react-native';
 import { TabNavigator } from './TabNavigator';
 import { ReminderDetailScreen } from '../screens/ReminderDetailScreen';
-import { NoteDetailScreen } from '../screens/NoteDetailScreen';
 import { PaywallScreen } from '../screens/PaywallScreen';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
 import { LocationPickerScreen } from '../screens/LocationPickerScreen';
@@ -60,7 +59,6 @@ export function RootNavigator() {
           component={ReminderDetailScreen}
           options={{ headerShown: true, title: t.reminder.title, presentation: 'modal' }}
         />
-        <Stack.Screen name="NoteDetail" component={NoteDetailScreen} options={{ presentation: 'modal' }} />
         <Stack.Screen name="LocationPicker" component={LocationPickerScreen} options={{ presentation: 'modal' }} />
         <Stack.Screen name="Paywall" component={PaywallScreen} options={{ presentation: 'modal' }} />
       </Stack.Navigator>

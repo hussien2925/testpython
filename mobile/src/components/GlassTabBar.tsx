@@ -12,6 +12,7 @@ import { TabParamList } from '../navigation/types';
 const ICONS: Record<keyof TabParamList, string> = {
   Chat: '💬',
   Reminders: '⏰',
+  Home: '🏠',
   Addresses: '📌',
   Settings: '⚙️',
 };

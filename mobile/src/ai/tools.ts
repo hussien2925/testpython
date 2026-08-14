@@ -2,7 +2,7 @@ import { OpenAiToolDefinition } from './openai';
 import { RepeatRule, LocationTrigger } from '../types';
 
 export const REPEAT_VALUES: RepeatRule[] = ['none', 'daily', 'weekly', 'monthly', 'yearly'];
-export const TRIGGER_VALUES: LocationTrigger[] = ['arrive', 'leave'];
+export const TRIGGER_VALUES: LocationTrigger[] = ['arrive', 'leave', 'passing'];
 
 export const AI_TOOLS: OpenAiToolDefinition[] = [
   {
@@ -38,11 +38,11 @@ export const AI_TOOLS: OpenAiToolDefinition[] = [
     function: {
       name: 'create_location_reminder',
       description:
-        'Create a reminder that fires when the user physically arrives at (or leaves) a place. Use whenever the user mentions a place: "when I get to the airport", "عند وصولي للمطار", "لما أوصل البيت". The client geocodes locationQuery on-device — pass the place as the user said it plus useful context (city/country) when known.',
+        'Create a reminder that fires based on location: arrival, departure, or passing by. Use whenever the user mentions a place: "when I get to the airport", "عند وصولي للمطار", "لما أوصل البيت", "when passing by". The client geocodes locationQuery on-device — pass the place as the user said it plus useful context (city/country) when known.',
       parameters: {
         type: 'object',
         properties: {
-          title: { type: 'string', description: 'What to be reminded of on arrival/leaving.' },
+          title: { type: 'string', description: 'What to be reminded of on arrival/leaving/passing.' },
           locationQuery: {
             type: 'string',
             description:
@@ -51,7 +51,7 @@ export const AI_TOOLS: OpenAiToolDefinition[] = [
           trigger: {
             type: 'string',
             enum: TRIGGER_VALUES,
-            description: 'Fire on arrival ("arrive") or when leaving the area ("leave"). Default: arrive.',
+            description: 'Fire on arrival ("arrive"), when leaving ("leave"), or when passing nearby ("passing"). Default: arrive.',
           },
           radiusMeters: {
             type: 'number',
@@ -59,38 +59,6 @@ export const AI_TOOLS: OpenAiToolDefinition[] = [
           },
         },
         required: ['title', 'locationQuery'],
-      },
-    },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'create_note',
-      description:
-        'Save a free-form text note. Use for things the user wants to remember but that have no clear time or place attached.',
-      parameters: {
-        type: 'object',
-        properties: {
-          title: { type: 'string', description: 'A short title (a few words).' },
-          content: { type: 'string', description: 'The full body of the note.' },
-        },
-        required: ['title', 'content'],
-      },
-    },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'add_to_checklist',
-      description:
-        'Add an item to a named checklist (creating the list if it does not exist yet). Use for phrases like "add milk to the grocery list" or "ضيف حليب لقائمة البقالة".',
-      parameters: {
-        type: 'object',
-        properties: {
-          listTitle: { type: 'string', description: 'The name of the checklist.' },
-          itemText: { type: 'string', description: 'The item to add.' },
-        },
-        required: ['listTitle', 'itemText'],
       },
     },
   },
@@ -106,21 +74,21 @@ export function buildSystemPrompt(now: Date, language: 'ar' | 'en'): string {
 
   return [
     'You are Nabhni — the built-in reminders assistant for a mobile app.',
-    'You help the user capture time-based reminders, location-based reminders, notes, and checklist items — nothing else.',
+    'You help the user capture time-based reminders and location-based reminders — nothing else.',
     `CURRENT_DATE_TIME (ISO): ${iso}`,
     `CURRENT_DATE_TIME (local): ${local}`,
     languageLine,
     'Behavior rules:',
-    '- FOCUS: Only process reminders, notes, checklists, and location-based alerts. Reject any other topic with "I only help with reminders, notes, and checklists."',
+    '- FOCUS: Only process reminders and location-based alerts. Reject any other topic with "I only help with reminders."',
     '- If the user wants to be reminded of something, call exactly one of the tools rather than describing it in prose.',
     '- Time reminders: always resolve relative expressions using CURRENT_DATE_TIME. Assume the user\'s local timezone matches the timestamp shown.',
     '- Location reminders: IMPORTANT — if the user mentions a location not in their saved addresses:',
     '  * Try to geocode it naturally (e.g., "البيت" + user context → "Riyadh" → "Riyadh, Saudi Arabia")',
     '  * If unclear or not found, ask for clarification: "Which location? You can tap the map button to show me the exact place."',
-    '  * Set trigger to "arrive" unless the user explicitly said "when I leave" or "on departure".',
-    '- Notes vs checklist: single free-form text → create_note; short items added to a named list → add_to_checklist.',
+    '  * Set trigger to "arrive" unless the user explicitly said "when I leave", "on departure", or "when passing by".',
+    '  * Use "passing" for continuous monitoring (e.g., "remind me when I pass by the coffee shop").',
     '- After a tool call, reply with one short confirmation sentence. Do not repeat details; the app renders a card.',
     '- Never fabricate coordinates. Only pass place NAME/QUERY and let the app geocode it.',
-    '- Never invent product features. This app only handles reminders, notes, checklists locally.',
+    '- Never invent product features. This app only handles reminders locally.',
   ].join('\n');
 }

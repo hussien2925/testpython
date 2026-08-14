@@ -24,6 +24,7 @@ export function ReminderStats({ reminders }: ReminderStatsProps) {
     const withLocation = thisMonth.filter((r) => r.location);
     const locationArrive = withLocation.filter((r) => r.location?.trigger === 'arrive');
     const locationLeave = withLocation.filter((r) => r.location?.trigger === 'leave');
+    const locationPassing = withLocation.filter((r) => r.location?.trigger === 'passing');
 
     return {
       total: thisMonth.length,
@@ -31,6 +32,7 @@ export function ReminderStats({ reminders }: ReminderStatsProps) {
       location: withLocation.length,
       arrive: locationArrive.length,
       leave: locationLeave.length,
+      passing: locationPassing.length,
     };
   }, [reminders]);
 
@@ -68,8 +70,9 @@ export function ReminderStats({ reminders }: ReminderStatsProps) {
         <StatCard icon="📍" label="Location" value={stats.location} theme={theme} />
         {stats.location > 0 ? (
           <>
-            <StatCard icon="📌" label="Arrive" value={stats.arrive} theme={theme} size="small" />
+            <StatCard icon="🚗" label="Arrive" value={stats.arrive} theme={theme} size="small" />
             <StatCard icon="🚪" label="Leave" value={stats.leave} theme={theme} size="small" />
+            <StatCard icon="👣" label="Passing" value={stats.passing} theme={theme} size="small" />
           </>
         ) : null}
       </View>

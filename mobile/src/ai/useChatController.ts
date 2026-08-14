@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useChat } from '../state/ChatContext';
 import { useReminders } from '../state/RemindersContext';
-import { useNotes } from '../state/NotesContext';
 import { useSubscription } from '../subscriptions/SubscriptionContext';
 import { useI18n } from '../i18n/I18nContext';
 import { callOpenAi, isOpenAiConfigured, OpenAiMessage } from './openai';
@@ -26,7 +25,6 @@ interface ChatController {
 export function useChatController(): ChatController {
   const { messages, appendMessage } = useChat();
   const { reminders, addReminder } = useReminders();
-  const { addNote, appendToChecklist } = useNotes();
   const { tier } = useSubscription();
   const { lang, t } = useI18n();
   const [isSending, setIsSending] = useState(false);
@@ -122,31 +120,11 @@ export function useChatController(): ChatController {
           };
         }
 
-        case 'create_note': {
-          const title = String(args.title ?? '').trim();
-          const content = String(args.content ?? '').trim();
-          const note = await addNote({ type: 'text', title: title || content.slice(0, 40), content });
-          return { artifact: { kind: 'note-created', noteId: note.id }, humanSummary: title || content.slice(0, 40) };
-        }
-
-        case 'add_to_checklist': {
-          const listTitle = String(args.listTitle ?? '').trim();
-          const itemText = String(args.itemText ?? '').trim();
-          if (!listTitle || !itemText) {
-            return {
-              artifact: { kind: 'error', message: 'missing_list_args' },
-              humanSummary: t.common.error,
-            };
-          }
-          const note = await appendToChecklist(listTitle, itemText);
-          return { artifact: { kind: 'checklist-updated', noteId: note.id, itemText }, humanSummary: itemText };
-        }
-
         default:
           return { artifact: { kind: 'error', message: `unknown_tool:${name}` }, humanSummary: t.common.error };
       }
     },
-    [addReminder, addNote, appendToChecklist, lang, t, tier, reminders]
+    [addReminder, lang, t, tier, reminders]
   );
 
   const sendViaAi = useCallback(
@@ -194,47 +172,30 @@ export function useChatController(): ChatController {
   const sendViaLocalFallback = useCallback(
     async (userText: string) => {
       const intent = parseInput(userText);
-      if (intent.kind === 'reminder') {
-        if (!intent.dueDate) {
-          const note = await addNote({ type: 'text', title: intent.title, content: userText });
-          await appendMessage('assistant', lang === 'ar' ? 'حفظت لك ملاحظة.' : 'Saved as a note.', [
-            { kind: 'note-created', noteId: note.id },
-          ]);
-          return;
-        }
-        if (tier === 'free' && countRemindersThisMonth(reminders) >= FREE_PLAN_LIMITS.maxRemindersPerMonth) {
-          await appendMessage(
-            'assistant',
-            lang === 'ar'
-              ? 'وصلت لحد ٥ تذكيرات هذا الشهر. اشترك في بلس علشان تذكيرات بلا حدود.'
-              : 'You\'ve hit the 5-reminder monthly limit on the free plan. Subscribe to Plus for unlimited reminders.'
-          );
-          return;
-        }
-        const reminder = await addReminder({
-          title: intent.title,
-          dueDate: intent.dueDate,
-          isAllDay: intent.isAllDay,
-          repeat: intent.repeat,
-        });
-        await appendMessage('assistant', lang === 'ar' ? 'جاهز.' : 'Set.', [
-          { kind: 'reminder-created', reminderId: reminder.id },
-        ]);
-      } else if (intent.kind === 'checklist-add') {
-        const note = await appendToChecklist(intent.listTitle, intent.itemText);
+      if (intent.kind !== 'reminder' || !intent.dueDate) {
+        await appendMessage('assistant', lang === 'ar' ? 'أحتاج تاريخ أو وقت بالضبط.' : 'I need a specific date or time.');
+        return;
+      }
+      if (tier === 'free' && countRemindersThisMonth(reminders) >= FREE_PLAN_LIMITS.maxRemindersPerMonth) {
         await appendMessage(
           'assistant',
-          lang === 'ar' ? `أضفت "${intent.itemText}" للقائمة.` : `Added "${intent.itemText}" to your list.`,
-          [{ kind: 'checklist-updated', noteId: note.id, itemText: intent.itemText }]
+          lang === 'ar'
+            ? 'وصلت لحد ٥ تذكيرات هذا الشهر. اشترك في بلس علشان تذكيرات بلا حدود.'
+            : 'You\'ve hit the 5-reminder monthly limit on the free plan. Subscribe to Plus for unlimited reminders.'
         );
-      } else {
-        const note = await addNote({ type: 'text', title: intent.title, content: intent.content });
-        await appendMessage('assistant', lang === 'ar' ? 'حفظت الملاحظة.' : 'Saved as a note.', [
-          { kind: 'note-created', noteId: note.id },
-        ]);
+        return;
       }
+      const reminder = await addReminder({
+        title: intent.title,
+        dueDate: intent.dueDate,
+        isAllDay: intent.isAllDay,
+        repeat: intent.repeat,
+      });
+      await appendMessage('assistant', lang === 'ar' ? 'جاهز.' : 'Set.', [
+        { kind: 'reminder-created', reminderId: reminder.id },
+      ]);
     },
-    [addReminder, addNote, appendToChecklist, appendMessage, lang, tier, reminders]
+    [addReminder, appendMessage, lang, tier, reminders]
   );
 
   const send = useCallback(
@@ -256,14 +217,9 @@ export function useChatController(): ChatController {
         await appendMessage(
           'assistant',
           lang === 'ar'
-            ? 'صار خطأ. راح أحفظها كملاحظة مؤقتاً.'
-            : 'Something went wrong. Saving it as a note for now.'
+            ? 'صار خطأ. حاول لاحقاً.'
+            : 'Something went wrong. Try again later.'
         );
-        try {
-          await sendViaLocalFallback(userText);
-        } catch {
-          // give up silently
-        }
       } finally {
         setIsSending(false);
       }

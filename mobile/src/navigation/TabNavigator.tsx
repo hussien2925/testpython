@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ChatScreen } from '../screens/ChatScreen';
 import { RemindersListScreen } from '../screens/RemindersListScreen';
+import { HomeScreen } from '../screens/HomeScreen';
 import { AddressesScreen } from '../screens/AddressesScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { GlassTabBar } from '../components/GlassTabBar';
@@ -20,6 +21,7 @@ export function TabNavigator() {
     >
       <Tab.Screen name="Chat" component={ChatScreen} options={{ title: t.chat.tab }} />
       <Tab.Screen name="Reminders" component={RemindersListScreen} options={{ title: t.home.reminders }} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'الرئيسية' }} />
       <Tab.Screen name="Addresses" component={AddressesScreen} options={{ title: 'عناويني' }} />
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: t.settings.title }} />
     </Tab.Navigator>

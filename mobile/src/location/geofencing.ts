@@ -26,9 +26,11 @@ if (Platform.OS !== 'web' && !TaskManager.isTaskDefined(GEOFENCE_TASK)) {
     if (!identifier?.startsWith('waqtak:')) return;
 
     const [, reminderId, expectedTriggerRaw] = identifier.split(':');
-    const expectedTrigger = expectedTriggerRaw === 'leave' ? 'leave' : 'arrive';
+    const expectedTrigger = expectedTriggerRaw as 'arrive' | 'leave' | 'passing';
     const firedTrigger = data.eventType === Location.LocationGeofencingEventType.Enter ? 'arrive' : 'leave';
-    if (firedTrigger !== expectedTrigger) return;
+
+    // For passing, fire on both enter and leave; for arrive/leave, fire only on the specific trigger
+    if (expectedTrigger !== 'passing' && firedTrigger !== expectedTrigger) return;
 
     try {
       const raw = await import('@react-native-async-storage/async-storage').then((m) => m.default.getItem('waqtak.reminders.v1'));
@@ -69,8 +71,8 @@ export function buildRegionForReminder(reminder: Reminder): GeofenceRegion | nul
     latitude,
     longitude,
     radius: Math.max(radius, 50),
-    notifyOnEnter: trigger === 'arrive',
-    notifyOnExit: trigger === 'leave',
+    notifyOnEnter: trigger === 'arrive' || trigger === 'passing',
+    notifyOnExit: trigger === 'leave' || trigger === 'passing',
   };
 }
 

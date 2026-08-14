@@ -5,7 +5,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../theme/ThemeContext';
 import { useI18n } from '../i18n/I18nContext';
 import { useReminders } from '../state/RemindersContext';
-import { useNotes } from '../state/NotesContext';
 import { ChatArtifact, ChatMessage } from '../types';
 import { RootStackParamList } from '../navigation/types';
 
@@ -16,7 +15,6 @@ function ArtifactCard({ artifact }: { artifact: ChatArtifact }) {
   const { t, lang } = useI18n();
   const navigation = useNavigation<Nav>();
   const { reminders } = useReminders();
-  const { notes } = useNotes();
 
   if (artifact.kind === 'error') {
     return (
@@ -58,7 +56,7 @@ function ArtifactCard({ artifact }: { artifact: ChatArtifact }) {
   if (artifact.kind === 'location-reminder-created') {
     const reminder = reminders.find((r) => r.id === artifact.reminderId);
     if (!reminder) return null;
-    const triggerLabel = reminder.location?.trigger === 'leave' ? t.chat.leaveTrigger : t.chat.arriveTrigger;
+    const triggerLabel = reminder.location?.trigger === 'leave' ? t.chat.leaveTrigger : reminder.location?.trigger === 'passing' ? t.chat.passingTrigger : t.chat.arriveTrigger;
     return (
       <Pressable
         onPress={() => navigation.navigate('ReminderDetail', { id: reminder.id })}
@@ -79,47 +77,6 @@ function ArtifactCard({ artifact }: { artifact: ChatArtifact }) {
             {reminder.location.name}
           </Text>
         ) : null}
-      </Pressable>
-    );
-  }
-
-  if (artifact.kind === 'note-created') {
-    const note = notes.find((n) => n.id === artifact.noteId);
-    if (!note) return null;
-    return (
-      <Pressable
-        onPress={() => navigation.navigate('NoteDetail', { id: note.id })}
-        style={[styles.card, { borderColor: theme.border, backgroundColor: theme.surface }]}
-      >
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardIcon}>📝</Text>
-          <Text style={[styles.cardKind, { color: theme.textSecondary }]}>{t.chat.noteCard}</Text>
-        </View>
-        <Text style={[styles.cardTitle, { color: theme.text }]} numberOfLines={2}>
-          {note.title || note.content.slice(0, 60)}
-        </Text>
-      </Pressable>
-    );
-  }
-
-  if (artifact.kind === 'checklist-updated') {
-    const note = notes.find((n) => n.id === artifact.noteId);
-    if (!note) return null;
-    return (
-      <Pressable
-        onPress={() => navigation.navigate('NoteDetail', { id: note.id })}
-        style={[styles.card, { borderColor: theme.border, backgroundColor: theme.surface }]}
-      >
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardIcon}>☑️</Text>
-          <Text style={[styles.cardKind, { color: theme.textSecondary }]}>{t.chat.checklistCard}</Text>
-        </View>
-        <Text style={[styles.cardTitle, { color: theme.text }]} numberOfLines={1}>
-          {note.title}
-        </Text>
-        <Text style={[styles.cardMeta, { color: theme.textSecondary }]}>
-          {t.chat.itemAddedTo}: {artifact.itemText}
-        </Text>
       </Pressable>
     );
   }
