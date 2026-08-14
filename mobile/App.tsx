@@ -22,6 +22,7 @@ function StatusBarBridge() {
 
 export default function App() {
   useEffect(() => {
+    console.log('[App] Mount - setupNotificationCategories');
     setupNotificationCategories();
   }, []);
 

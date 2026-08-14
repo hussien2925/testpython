@@ -32,9 +32,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     (async () => {
-      const stored = await readJSON<AppSettings>('settings', defaultSettings);
-      setSettings(stored);
-      setLoaded(true);
+      try {
+        console.log('[SettingsProvider] Loading settings...');
+        const stored = await readJSON<AppSettings>('settings', defaultSettings);
+        console.log('[SettingsProvider] Loaded:', stored);
+        setSettings(stored);
+        setLoaded(true);
+        console.log('[SettingsProvider] Ready');
+      } catch (err) {
+        console.error('[SettingsProvider] Error:', err);
+        setLoaded(true);
+      }
     })();
   }, []);
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, ActivityIndicator } from 'react-native';
 import { TabNavigator } from './TabNavigator';
 import { ReminderDetailScreen } from '../screens/ReminderDetailScreen';
 import { NoteDetailScreen } from '../screens/NoteDetailScreen';
@@ -19,7 +20,13 @@ export function RootNavigator() {
   const theme = useTheme();
   const { t } = useI18n();
 
-  if (!loaded) return null;
+  if (!loaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#150F3D' }}>
+        <ActivityIndicator size="large" color="#FFB020" />
+      </View>
+    );
+  }
 
   const navTheme = {
     dark: theme.mode === 'dark',
