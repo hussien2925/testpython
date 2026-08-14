@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, Linking, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -146,6 +146,16 @@ export function LocationPickerScreen() {
           style={[styles.searchInput, { color: theme.text, backgroundColor: theme.surface, borderColor: theme.border }]}
         />
         <PrimaryButton label={t.location.searchButton} onPress={runSearch} loading={searching} style={{ paddingHorizontal: 16 }} />
+        <Pressable
+          onPress={() => {
+            const url = `https://www.google.com/maps/search/${encodeURIComponent(query || 'places')}`;
+            Linking.openURL(url).catch(() => {});
+          }}
+          style={[styles.mapButton, { backgroundColor: theme.primary }]}
+          accessibilityLabel="Open Google Maps"
+        >
+          <Text style={{ fontSize: 18 }}>📍</Text>
+        </Pressable>
       </View>
 
       {results.length > 0 ? (
@@ -280,6 +290,7 @@ const styles = StyleSheet.create({
   notice: { marginHorizontal: 16, padding: 10, borderRadius: 10, borderWidth: 1, marginBottom: 8 },
   searchRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, marginBottom: 10, alignItems: 'center' },
   searchInput: { flex: 1, borderWidth: 1, borderRadius: 12, padding: 12, fontSize: 15 },
+  mapButton: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   resultRow: { padding: 12, borderRadius: 10, borderWidth: 1, marginBottom: 6 },
   mapContainer: { height: 220, marginHorizontal: 16, marginTop: 8, borderRadius: 12, overflow: 'hidden' },
   mapFallback: { marginHorizontal: 16, marginTop: 8, padding: 20, borderRadius: 12, borderWidth: 1, alignItems: 'center' },

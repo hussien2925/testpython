@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text } from 'react-native';
+import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
@@ -15,6 +15,7 @@ export function VoiceInputButton({ onResult }: Props) {
   const theme = useTheme();
   const { lang, t } = useI18n();
   const [listening, setListening] = useState(false);
+  const pulseAnim = React.useRef(new Animated.Value(0)).current;
 
   useSpeechRecognitionEvent('result', (event) => {
     const transcript = event.results[0]?.transcript;
@@ -37,39 +38,75 @@ export function VoiceInputButton({ onResult }: Props) {
       return;
     }
     setListening(true);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 600, useNativeDriver: false }),
+        Animated.timing(pulseAnim, { toValue: 0, duration: 600, useNativeDriver: false }),
+      ])
+    ).start();
     ExpoSpeechRecognitionModule.start({
       lang: lang === 'ar' ? 'ar-SA' : 'en-US',
       interimResults: false,
       continuous: false,
     });
-  }, [lang]);
+  }, [lang, pulseAnim, t]);
 
   const stop = useCallback(() => {
+    pulseAnim.setValue(0);
     ExpoSpeechRecognitionModule.stop();
-  }, []);
+  }, [pulseAnim]);
+
+  const pulseOpacity = pulseAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.3, 0.8],
+  });
 
   return (
-    <Pressable
-      onPress={listening ? stop : start}
-      style={[
-        styles.button,
-        { backgroundColor: listening ? theme.danger : theme.primary },
-      ]}
-      accessibilityRole="button"
-      accessibilityLabel="voice input"
-    >
-      <Text style={styles.icon}>{listening ? '⏹' : '🎙️'}</Text>
-    </Pressable>
+    <View>
+      {listening ? (
+        <Animated.View
+          style={[
+            styles.pulse,
+            {
+              opacity: pulseOpacity,
+              borderColor: '#EF4444',
+            },
+          ]}
+        />
+      ) : null}
+      <Pressable
+        onPress={listening ? stop : start}
+        style={[
+          styles.button,
+          {
+            backgroundColor: listening ? '#EF4444' : theme.primary,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="voice input"
+      >
+        <Text style={styles.icon}>🎙️</Text>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
   icon: { fontSize: 20 },
+  pulse: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 2,
+    top: -6,
+    left: -6,
+  },
 });
